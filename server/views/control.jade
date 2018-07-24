@@ -1,0 +1,52 @@
+doctype html
+html
+    head
+        title Escape Room Control
+        link(rel='stylesheet', href='css/main.css')
+
+    body
+        div.container
+            h1 Control
+            h3 User Online
+            div
+                | คนออนไลน์&nbsp;
+                span.online 0
+                |  คน
+            h1 สมาชิกในห้อง
+            #member
+                ul
+
+            h2 Timer
+            div(id="timer") 00:00:00
+
+            h2 log
+            div(id="log",style="border:1px solid #000;display:block;height:400px;overflow-y:scroll;")
+                ul
+
+
+            h3 Time Finish
+            b Start :
+            span.timestart
+            br
+            b Red :
+            span.timered
+            br
+            b Blue :
+            span.timeblue
+            br
+
+            button(id='start') START
+            button(id='resume') RESUME
+            button(id='stop') STOP
+            button(id='reset') RESET
+            br
+            button(class='open-video',data-url='rules_demo.mp4') OPEN VIDEO
+            button(class='open-video',data-url='mov_bbb.mp4') OPEN VIDEO
+            button(class='close-video') CLOSE VIDEO
+
+    //script.var book = '#{book}'
+    script(src = 'js/jquery-3.1.1.min.js')
+    script(src = "https://cdn.socket.io/socket.io-1.3.3.js")
+        //script(src = 'js/socket.io.js')
+    script(src = 'js/control.js')
+

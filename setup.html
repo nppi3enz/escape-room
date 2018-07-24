@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="js/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    Choose your team :
+    <select name="name">
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+    </select>
+    Sub-Room (optional) :
+    <select name="subroom">
+        <option value="a">a</option>
+        <option value="b">b</option>
+        <option value="">None</option>
+    </select>
+    Current Level :
+    <!--<select name="level">-->
+        <!--<option value="0">Level 0</option>-->
+        <!--<option value="1">Level 1</option>-->
+        <!--<option value="2">Level 2</option>-->
+        <!--<option value="3">Level 3</option>-->
+        <!--<option value="4">Level 4</option>-->
+        <!--<option value="5">Level 5</option>-->
+    <!--</select>-->
+    <button id="button" type="button">Submit</button>
+<script>
+    $(document).ready( function () {
+        $(document).on('click', '#button', function () {
+//            alert($('select[name=name]').val());
+//            alert($('select[name=subroom]').val());
+//            alert($('select[name=level]').val());
+            localStorage.setItem("team", $('select[name=name]').val());
+            localStorage.setItem("subroom", $('select[name=subroom]').val());
+//            localStorage.setItem("level", $('select[name=level]').val());
+            alert('Setting Complete!');
+        });
+    });
+</script>
+</body>
+</html>

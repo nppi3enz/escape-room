@@ -1,0 +1,17 @@
+{
+  "name": "escape-room-server",
+  "version": "1.0.0",
+  "description": "Timer and control escape room game",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "countdown": "^2.6.0",
+    "express": "^4.15.2",
+    "jade": "^1.11.0",
+    "socket.io": "^1.7.3"
+  }
+}

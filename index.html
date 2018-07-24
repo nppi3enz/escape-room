@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bulma.css">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/socket.io.min.js"></script>
+    <script src="js/countdown.min.js"></script>
+</head>
+<style>
+    @font-face {
+        font-family: 'ds-digitalitalic';
+        src: url('fonts/ds-digii-webfont.woff2') format('woff2'),
+        url('fonts/ds-digii-webfont.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+
+    }
+    @font-face {
+        font-family:'PS Pimpdeed II New';
+        src: url('fonts/PS Pimpdeed II New.eot');
+        src: url('fonts/PS Pimpdeed II New.eot?#iefix') format('embedded-opentype'),
+        url('fonts/PS Pimpdeed II New.woff2') format('woff2'),
+        url('fonts/PS Pimpdeed II New.woff') format('woff'),
+        url('fonts/PS Pimpdeed II New.svg#PS Pimpdeed II New') format('svg');
+        font-weight: 400;
+        font-style: normal;
+        font-stretch: normal;
+        unicode-range: U+0020-FB02;
+
+    }
+    body{
+        background: #000;
+    }
+    .box{
+        background: rgba(255,255,255,0.9);
+    }
+    .time{
+        display:inline-block;
+        width:65px;
+    }
+    .red .icon-status, .blue .icon-status{
+        color: #2b292a;
+    }
+    .red .icon-status.success{
+        color: #f43e12;
+    }
+    .blue .icon-status.success{
+        color: #334bf4;
+    }
+    .font-white{
+        color: #fff;
+    }
+    .clue{
+        font-size:2em;
+    }
+    .title-clue{
+        font-size:1.5em;
+        text-decoration: underline;
+    }
+    .bg-time{
+        background: rgba(0,0,0,0.5);
+    }
+    #timer{
+        font-family: 'ds-digitalitalic';
+        font-size: 8.5em;
+        text-align: center;
+        color: red;
+    }
+    #timer .time{
+        text-align: right;
+    }
+    .box-clue{
+        font-family:'PS Pimpdeed II New';
+        font-size:1.5em;
+    }
+    #status_lock{
+        font-family:'PS Pimpdeed II New';
+        font-weight: 600;
+        font-size:2em;
+    }
+    /*.is-online{*/
+        /*border:2px solid red;*/
+        /*color: red;*/
+        /*background: none;*/
+    /*}*/
+
+</style>
+<body>
+<section class="hero is-fullheight" style="background-image: url('images/bg.jpg'); background-position: center">
+    <div class="hero-body">
+        <div class="container" style="padding:0px 20px;">
+            <div class="tile is-ancestor">
+                <div class="tile is-vertical is-parent">
+                    <div class="tile is-child box bg-time">
+                        <div id="status">
+                            <div class="red" style="float: left;">
+                                <div style="display:inline-block;padding-top:4px;color:#f43e12;">A</div>
+                                <i class="icon-status fa fa-circle fa-2x light1"></i>
+                                <i class="icon-status fa fa-circle fa-2x light2"></i>
+                                <i class="icon-status fa fa-circle fa-2x light3"></i>
+                                <div style="position:absolute;display: inline-block;margin-top:15px;">
+                                    <i class="icon-status fa fa-circle fa-2x light7"></i>
+                                    <i class="icon-status fa fa-circle fa-2x light8"></i>
+                                </div>
+                                <br>
+                                <div style="display:inline-block;padding-top:4px;color:#f43e12;">B</div>
+                                <i class="icon-status fa fa-circle fa-2x light4"></i>
+                                <i class="icon-status fa fa-circle fa-2x light5"></i>
+                                <i class="icon-status fa fa-circle fa-2x light6"></i>
+                            </div>
+                            <div class="blue" style="float:right">
+                                <div style="position:absolute;display: inline-block;margin-top:15px;margin-left:-65px;">
+                                    <i class="icon-status fa fa-circle fa-2x light8"></i>
+                                    <i class="icon-status fa fa-circle fa-2x light7"></i>
+                                </div>
+                                <i class="icon-status fa fa-circle fa-2x light3"></i>
+                                <i class="icon-status fa fa-circle fa-2x light2"></i>
+                                <i class="icon-status fa fa-circle fa-2x light1"></i>
+                                <div style="display:inline-block;padding-top:4px;color:#334bf4;">A</div>
+                                <br>
+                                <i class="icon-status fa fa-circle fa-2x light6"></i>
+                                <i class="icon-status fa fa-circle fa-2x light5"></i>
+                                <i class="icon-status fa fa-circle fa-2x light4"></i>
+                                <div style="display:inline-block;padding-top:4px;color:#334bf4;">B</div>
+                            </div>
+                            <div class="clear" style="clear:both;"></div>
+
+                        </div>
+
+                        <div id="timer">
+                            <div class="time minute1">0</div><div class="time minute2">0</div>:<div class="time second1">0</div><div class="time second2">0</div>
+                            <!--:<div class="time millisecond1">0</div><div class="time millisecond2">0</div>-->
+                        </div>
+                    </div>
+                    <div class="tile is-child box box-clue" style="text-align: center">
+                        <div class="title-clue"><span class="clue_num"></span></div>
+                        <div class="clue"></div>
+                    </div>
+                </div>
+                <div class="tile is-vertical is-parent">
+                    <div class="tile is-child ">
+                        <div class="columns">
+                            <div class="column is-8">
+                                <div class="title font-white">Team : <span class="team-name"></span>&nbsp;<span class="sub-room"></span></div>
+                            </div>
+                            <div class="column is-2">
+                                <a class="button open-disk">
+                                <span class="icon is-small" style="width:50px;">
+                                  <i class="fa fa-eject"></i> CD
+                                </span>
+                                </a>
+                            </div>
+                            <!--<div class="column is-1">-->
+                                <!--<a class="button">-->
+                        <!--<span class="icon is-small">-->
+                          <!--<i class="fa fa-volume-up"></i>-->
+                        <!--</span>-->
+                                <!--</a>-->
+                            <!--</div>-->
+                            <!--<div class="column is-2" style="text-align: right;">-->
+                                <!--<a class="button">-->
+                                <!--<span class="icon">-->
+                                  <!--<i class="fa fa-question-circle"></i>-->
+                                <!--</span>-->
+                                    <!--<span>ขอคำใบ้</span>-->
+                                <!--</a>-->
+                            <!--</div>-->
+                            <div class="column is-2 status_server" style="text-align: right;">
+                                <span class="tag is-danger is-medium">Offline</span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tile is-child box">
+                        <div class="field">
+                            <p class="control">
+                                <input class="input is-large" name="password" type="text" placeholder="0000" maxlength="4">
+                            </p>
+                            <div id="status_lock" class="has-text-centered" style="padding-top:5px;font-size:2em;">โปรดกรอกตัวเลข 4 หลัก</div>
+                        </div>
+                        <br>
+                        <!--<a class="button is-primary is-outlined is-fullwidth is-large submit">SUBMIT</a><br>-->
+                        <div class="columns">
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">1</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">2</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">3</a></div>
+                        </div>
+                        <div class="columns">
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">4</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">5</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">6</a></div>
+                        </div>
+                        <div class="columns">
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">7</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">8</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">9</a></div>
+                        </div>
+                        <div class="columns">
+                            <div class="column"><a class="button is-outlined is-fullwidth del-btn">DEL</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth digit-btn">0</a></div>
+                            <div class="column"><a class="button is-outlined is-fullwidth is-primary submit">SEND</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="modal-disk" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">โปรดใส่หมายเลขแทร็คด้วยค่ะ</p>
+                <button class="delete close-disk"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="disk-hide">
+                    <input type="text" class="input" name="tracking">
+                    <div class="result-disk"></div>
+                </div>
+
+                <div class="disk-show" style="display: none;">
+                    77. I have Nothing<br><br>
+                    <audio controls>
+                        <source src="files/encrypt_final.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+            </section>
+            <footer class="modal-card-foot is-centered">
+                <a class="button is-success check-disk">ตกลง</a>
+                <a class="button close-disk">ยกเลิก</a>
+            </footer>
+        </div>
+</div>
+<div id="video" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <video id="myVideo" controls>
+            <source src="" type="video/mp4">
+            <!--<source src="files/rules_demo.ogg" type="video/ogg">-->
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+    <button class="modal-close"></button>
+</div>
+
+<div id="hide" style="display: none;">
+    <video id="soundbgm" controls loop>
+        <source src="files/soundbgm.mp3" type="audio/mpeg">
+        Your browser does not support the video tag.
+    </video>
+    <video id="voice" controls>
+        <source src="" type="audio/mpeg">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+    function n(n){
+        return n > 9 ? "" + n: "0" + n;
+    }
+    var gameFinish = false;
+
+    $(document).on('click', '.digit-btn', function () {
+        var new_num = $(this).html();
+        var old = $("input[name=password]").val();
+        $("input[name=password]").val(old+new_num);
+    });
+    $(document).on('click', '.del-btn', function () {
+        var str = $("input[name=password]").val();
+        str = str.substring(0, str.length - 1);
+        $("input[name=password]").val(str);
+    });
+    $(document).on('click', '.check-disk', function () {
+        var tracking = $('input[name=tracking]').val();
+        if(55+89-1+1000/25*tracking-3200 == 23) {
+            $('.disk-hide').hide();
+            $('.disk-show').show();
+        } else {
+            $('.result-disk').html('ยังไม่พบหมายเลข '+tracking+' ค่ะ');
+        }
+    });
+    $(document).on('click', '.open-disk', function () {
+        $('#modal-disk').addClass('is-active');
+        $('#soundbgm')[0].pause();
+    });
+    $(document).on('click', '.close-disk', function () {
+        $('#modal-disk').removeClass('is-active');
+        $('#soundbgm')[0].play();
+    });
+    $(document).on('click', '#video .modal-close', function () {
+        $('#video').removeClass('is-active');
+        $('#myVideo')[0].pause();
+    })
+
+
+
+    $(document).ready( function () {
+        if (typeof(Storage) !== "undefined") {
+            // Code for localStorage/sessionStorage.
+            if(localStorage.getItem("team") == undefined) {
+                $('body').html('<p style="color:#fff;">กรุณาตั้งค่าก่อนใช้งาน</p>');
+                return false;
+            }
+        } else {
+            // Sorry! No Web Storage support..
+            alert('Sorry! No Web Storage support');
+            return false;
+        }
+
+        wsUri = 'http://' + (document.location.host) + ':7777'; // เขียนurlติดต่อไปยัง server ในพอร์ต 9999
+        var socket = io.connect(wsUri); // ทำการติดต่อ
+
+        function sendPass(){
+        $("#status_lock").html("กำลังยืนยันรหัส...");
+            var pass = $('input[name=password]').val();
+            $('input[name=password]').val("");
+            socket.emit('sendPass', {password: pass});
+        }
+
+        function showText(text){
+            $("#status_lock").html("โปรดใส่ตัวเลข 4 หลัก");
+        }
+
+        $('.submit').click(function() { // มีผลเหมือนกับฟังชั่น keypress เพียงแต่เป็นการคลิ๊กปุ่ม
+            sendPass();
+        });
+        $("input[name=password]").keyup(function(event){
+            if(event.keyCode == 13){
+                sendPass();
+            }
+        });
+        socket.on('connect', function (data) {
+            //alert('connected');
+            var team = localStorage.getItem("team");
+            var temp = team.toUpperCase();
+            $('.team-name').text(temp);
+            var subroom = localStorage.getItem("subroom");
+            temp = subroom.toUpperCase();
+            $('.sub-room').text('('+temp+')');
+            socket.emit('register',
+                {   team: team,
+                    subroom: subroom,
+                }
+            );
+        })
+
+        socket.on('callback', function (data) {
+            $('.status_server').html('<span class="tag is-success is-medium">Online</span>');
+        });
+        socket.on('disconnect', function(){
+            $('.status_server').html('<span class="tag is-danger is-medium">Offline</span>');
+        });
+        socket.on('gameFinish', function(){
+            gameFinish = true;
+        });
+
+        socket.on('timer', function (data) {
+            if(!gameFinish) {
+                var c = data.countdown;
+                var mi = n(c.minutes);
+                var se = n(c.seconds);
+//                var milli = n(parseInt(c.milliseconds / 10));
+                //$('#timer').html(mi+':'+se+':'+mili);
+                $('.minute1').text(parseInt(mi / 10));
+                $('.minute2').text(mi % 10);
+                $('.second1').text(parseInt(se / 10));
+                $('.second2').text(se % 10);
+//                $('.millisecond1').text(parseInt(milli / 10));
+//                $('.millisecond2').text(milli % 10);
+            }
+        });
+
+        socket.on('updateStatus', function (data){
+            for(var i=0;i<data['red'].length;i++) {
+                if (data['red'][i] == true) {
+                    $('#status .red .light'+(i+1)).addClass('success');
+                } else {
+                    $('#status .red .light'+(i+1)).removeClass('success');
+                }
+            }
+            for(var i=0;i<data['blue'].length;i++) {
+                if (data['blue'][i] == true) {
+                    $('#status .blue .light'+(i+1)).addClass('success');
+                } else {
+                    $('#status .blue .light'+(i+1)).removeClass('success');
+                }
+            }
+        });
+
+        socket.on('clue', function (data) {
+            $('.title-clue').html('ภารกิจที่ '+data.clue_num);
+            //$('.clue_num').html(data.clue_num);
+            $('.clue').html(data.text);
+        });
+
+        socket.on('result', function (data) {
+            if(data === true) {
+                $("#status_lock").html("รหัสผ่านถูกต้อง");
+            } else {
+                $("#status_lock").html("รหัสผ่านไม่ถูกต้อง");
+            }
+
+        });
+
+        socket.on('open-video', function (data) {
+            $('#video').addClass('is-active');
+            $('#myVideo source').attr('src','files/'+data);
+            $("#myVideo")[0].load();
+            $('#myVideo')[0].play();
+        });
+        socket.on('start-game', function (data) {
+            $('#soundbgm').volume = 0.5;
+            $('#soundbgm')[0].play();
+            $('#voice').attr('src','files/start.mp3');
+            $('#voice').volume = 1
+            $('#voice')[0].load();
+            $('#voice')[0].play();
+        });
+        socket.on('open-video', function (data) {
+            $('#video').addClass('is-active');
+            $('#myVideo source').attr('src','files/'+data);
+            $("#myVideo")[0].load();
+            $('#myVideo')[0].play();
+        });
+        socket.on('close-video', function (data) {
+            $('#myVideo')[0].pause();
+            $('#video').removeClass('is-active');
+        });
+        socket.on('stop-sound', function (data) {
+            $('#soundbgm')[0].pause();
+        });
+        socket.on('voice', function (data) {
+            $('#voice').attr('src','files/'+data);
+            $('#voice').volume = 1;
+            $('#voice')[0].load();
+            $('#voice')[0].play();
+        });
+
+
+    });
+</script>
+</body>
+</html>
